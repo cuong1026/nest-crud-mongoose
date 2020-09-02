@@ -1,0 +1,43 @@
+import { CreateManyDto, CrudRequest, CrudRequestOptions, CrudService, GetManyDefaultResponse, JoinOptions } from '@nestjsx/crud';
+import { ParsedRequestParams, QueryFields, QueryJoin } from '@nestjsx/crud-request';
+import { Document, DocumentQuery, Model } from 'mongoose';
+import { DeepPartial, ObjectLiteral } from 'typeorm';
+export declare class MongooseCrudService<T extends Document> extends CrudService<T> {
+    repo: Model<T>;
+    private entityColumns;
+    private entityPrimaryColumns;
+    constructor(repo: Model<T>);
+    readonly findOne: Model<T>['findOne'];
+    readonly find: Model<T>['find'];
+    readonly findById: Model<T>['findById'];
+    readonly count: Model<T>['count'];
+    private readonly alias;
+    getMany(req: CrudRequest): Promise<GetManyDefaultResponse<T> | T[]>;
+    getOne(req: CrudRequest): Promise<T>;
+    createOne(req: CrudRequest, dto: any): Promise<T>;
+    createMany(req: CrudRequest, dto: CreateManyDto<DeepPartial<T>>): Promise<T[]>;
+    updateOne(req: CrudRequest, dto: any): Promise<T>;
+    replaceOne(req: CrudRequest, dto: DeepPartial<T> | any): Promise<T>;
+    deleteOne(req: CrudRequest): Promise<void | T>;
+    getParamFilters(parsed: CrudRequest['parsed']): ObjectLiteral;
+    decidePagination(parsed: ParsedRequestParams, options: CrudRequestOptions): boolean;
+    createBuilder<K>(fn: (...args: any[]) => DocumentQuery<K, T>, parsed: ParsedRequestParams, options: CrudRequestOptions, many?: boolean): Promise<{
+        builder: DocumentQuery<K, T>;
+        take?: number;
+        skip?: number;
+    }>;
+    buildFieldSelect(include: QueryFields, excludes: QueryFields): string;
+    buildNestedVirtualPopulate<K>(field: string, select: string): any;
+    protected setJoin<K>(cond: QueryJoin, joinOptions: JoinOptions, builder: DocumentQuery<K, T>): DocumentQuery<K, T, {}>;
+    protected getOneOrFail(req: CrudRequest): Promise<T>;
+    protected getOneShallowOrFail(where: ObjectLiteral): Promise<T>;
+    protected prepareEntityBeforeSave(dto: DeepPartial<T>, parsed: CrudRequest['parsed']): DeepPartial<T>;
+    private getDefaultSearchCondition;
+    private queryFilterToSearch;
+    private onInitMapEntityColumns;
+    private onInitMapRelations;
+    private getAllowedColumns;
+    private getSelect;
+    private getSort;
+    private mapSort;
+}
